@@ -69,7 +69,7 @@ Construye un paquete ZIP con los archivos necesarios para correr la lambda en AW
 ## Despliegue
 
 Para el despliegue de la lambda y sus componentes adicionales se usa `terraform`, el código IAC esta almacenado en el directorio `terraform` que esta ubicado en la raíz del proyecto
-**Nota:** La version de `terraform` usada es **v0.13.2**
+**Nota:** La version de `terraform` usada es **v0.14.9**
 
 ### Plan de despliegue en ambiente dev
 
@@ -86,5 +86,12 @@ npm run tf:dev:apply
 ## Consumo del RestAPI
 
 ```bash
-# aqui va el curl
+curl --location --request POST 'https://70ebveca22.execute-api.us-east-1.amazonaws.com/dev/magneto/api/v1/mutant' \
+--header 'x-api-key: <Aqui el API Key>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "dna": ["ATGCAA", "CAGTGC", "TTATGT", "AGAAGG", "ACCCTA", "TCACTG"]
+}'
 ```
+
+_Nota:_ la Api Key para consumir el endpoint será enviada a los interesados
