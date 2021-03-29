@@ -6,6 +6,7 @@ Lambda que expone un Rest API para consultar si un ADN es de un mutante o no
 
 - NodeJS 12 o superior
 - npm 6 o superior
+- terraform 0.14.9 o superior
 - Prettier vscode plugin [https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode] o como dependencia de npm [https://prettier.io/docs/en/install.html]
 
 ## Inicializar proyecto

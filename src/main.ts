@@ -20,6 +20,7 @@ const contextMock: Context = {
   succeed: null,
 };
 
+// mutant
 /*const dna: string[] = [
   "ATGCGA",
   "CAGTGC",
@@ -29,18 +30,20 @@ const contextMock: Context = {
   "TCACTG",
 ];*/
 
+// no mutant
 const dna: string[] = [
-  "ATGCGA",
+  "ATGCAA",
   "CAGTGC",
-  "TTATTT",
-  "AGXCGG",
-  "GCGTCA",
+  "TTATGT",
+  "AGAAGG",
+  "ACCCTA",
   "TCACTG",
 ];
 
 const request = { dna };
 
 const eventMock = {
+  headers: {},
   body: JSON.stringify(request),
 } as APIGatewayProxyEvent;
 

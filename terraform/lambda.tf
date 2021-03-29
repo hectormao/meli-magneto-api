@@ -12,9 +12,19 @@ resource "aws_lambda_function" "magneto_mutant_checker" {
       SEQUENCE_SIZE      = var.sequence_size
       MIN_FINDINGS       = var.min_findings
       CONTENT_EXPRESSION = var.content_expression
+      DNA_TABLE          = data.aws_dynamodb_table.dna.name
+      STATS_TABLE        = data.aws_dynamodb_table.stats.name
     }
   }
   tags = local.common_tags
+}
+
+data "aws_dynamodb_table" "dna" {
+  name = "dna-${var.app_env}"
+}
+
+data "aws_dynamodb_table" "stats" {
+  name = "magneto-stats-${var.app_env}"
 }
 
 data "aws_caller_identity" "current" {}
@@ -75,6 +85,6 @@ resource "aws_api_gateway_deployment" "mutant" {
   stage_name  = var.app_env
 }
 
-output "occre_apigateway_url" {
+output "mutant_apigateway_url" {
   value = aws_api_gateway_deployment.mutant.invoke_url
 }

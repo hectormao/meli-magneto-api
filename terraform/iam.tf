@@ -32,6 +32,20 @@ resource "aws_iam_role_policy" "magneto_mutant_checker" {
                "logs:PutLogEvents"
            ],
            "Resource": "arn:aws:logs:*:*:*"
+       },
+       {
+           "Effect": "Allow",
+           "Action": [
+               "dynamodb:PutItem"
+           ],
+           "Resource": "${data.aws_dynamodb_table.dna.arn}"
+       },
+       {
+           "Effect": "Allow",
+           "Action": [
+               "dynamodb:UpdateItem"
+           ],
+           "Resource": "${data.aws_dynamodb_table.stats.arn}"
        }
    ]
 }
