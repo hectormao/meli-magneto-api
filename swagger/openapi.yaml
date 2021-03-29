@@ -1,0 +1,95 @@
+openapi: 3.0.0
+info:
+  title: MeLi Magneto Verificador Mutante API
+  description: API para analizar una cadena de ADN y validar si pertenece a un mutante o no
+  version: 1.0.0
+tags:
+  - name: Magneto Mutante Checker
+    description: Rest API Verificador de Cadena de ADN para validar si pertenecen a un mutante
+servers:
+  - url: https://70ebveca22.execute-api.us-east-1.amazonaws.com/dev/magneto/api/v1
+    description: Ambiente de Despliegue DEV (unico ambiente) de examen MeLi
+paths:
+  /mutant:
+    post:
+      summary: Verifica si la cadena de ADN es de un mutante
+      description: Verifica si la cadena de ADN pertence a un Mutante
+      tags:
+        - Magneto Mutante Checker
+      requestBody:
+        $ref: "#/components/requestBodies/DNA"
+      responses:
+        "200":
+          description: DNA enviado en el request pertenece a un Mutante
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutantResponse"
+              example:
+                code: 200
+                message: DNA is a mutant 😀
+        "403":
+          description: DNA enviado NO pertenece a un mutante
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutantResponse"
+              example:
+                code: 403
+                message: DNA isn't a mutant 😭
+        "400":
+          description: Cadena de ADN invalida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutantResponse"
+              example:
+                code: 400
+                message: Invalid DNA ❌
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutantResponse"
+        "503":
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MutantResponse"
+security:
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+  requestBodies:
+    DNA:
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/DNA"
+  schemas:
+    DNA:
+      type: object
+      properties:
+        dna:
+          type: array
+          description: Cadena de ADN (Matriz)
+          items:
+            type: string
+    MutantResponse:
+      type: object
+      properties:
+        code:
+          type: number
+          description: Codigo HTTP de la respuesta
+        message:
+          type: string
+          description: Mensaje de exito o error del proceso de chequeo
+      required:
+        - code
+        - message
