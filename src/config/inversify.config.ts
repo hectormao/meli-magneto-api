@@ -8,6 +8,8 @@ import { RightDiagonalChecker } from "../chk/rightDiagonalChecker";
 import { LeftDiagonalChecker } from "../chk/leftDiagonalChecker";
 import { DNAValidator } from "../val/dnaValidator";
 import { MagnetoMutantRequestExtractor } from "../extr/magnetoMutantRequestExtractor";
+import { DynamoDB, config } from "aws-sdk";
+import { MagnetoMutantRepo } from "../repo/magnetoMutantRepo";
 
 /**
  * IoC Container Configuration
@@ -21,6 +23,14 @@ const contentExpr: RegExp = new RegExp(
   process.env["CONTENT_EXPRESSION"] || "^[ATCG]+$"
 );
 
+const dnaTable: string = process.env["DNA_TABLE"] || "dna-dev";
+const statsTable: string = process.env["STATS_TABLE"] || "magneto-stats-dev";
+
+config.update({
+  region: process.env["AWS_REGION"] || "us-east-1",
+});
+const dynamoClient: DynamoDB = new DynamoDB();
+
 const checkers: DNAChecker[] = [
   new HorizontalDNAChecker(sequenceSize),
   new VerticalDNAChecker(sequenceSize),
@@ -28,6 +38,7 @@ const checkers: DNAChecker[] = [
   new RightDiagonalChecker(sequenceSize),
 ];
 
+container.bind<MagnetoMutantRepo>(TYPES.Repository).to(MagnetoMutantRepo);
 container.bind<MagnetoMutantService>(TYPES.Service).to(MagnetoMutantService);
 container
   .bind<MagnetoMutantRequestExtractor>(TYPES.Extractor)
@@ -35,6 +46,9 @@ container
 container.bind<DNAChecker[]>(TYPES.Checker).toConstantValue(checkers);
 container.bind<DNAValidator>(TYPES.Validator).to(DNAValidator);
 container.bind<number>(TYPES.SequenceSize).toConstantValue(sequenceSize);
+container.bind<string>(TYPES.DNATable).toConstantValue(dnaTable);
+container.bind<string>(TYPES.StatsTable).toConstantValue(statsTable);
+container.bind<DynamoDB>(TYPES.DbClient).toConstantValue(dynamoClient);
 container.bind<number>(TYPES.MinFindings).toConstantValue(minFindings);
 container.bind<RegExp>(TYPES.ContentExpr).toConstantValue(contentExpr);
 

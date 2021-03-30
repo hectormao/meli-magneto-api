@@ -16,26 +16,32 @@ export const invalidColsDNA: any = {
 };
 
 export const validDNAEvent = {
+  headers: {},
   body: JSON.stringify(validDNA),
 } as APIGatewayProxyEvent;
 
 export const noMutantDNAEvent = {
+  headers: {},
   body: JSON.stringify(noMutantDNA),
 } as APIGatewayProxyEvent;
 
 export const invalidNoDNAEvent = {
+  headers: {},
   body: JSON.stringify(invalidNoDNA),
 } as APIGatewayProxyEvent;
 
 export const invalidContentDNAEvent = {
+  headers: {},
   body: JSON.stringify(invalidContentDNA),
 } as APIGatewayProxyEvent;
 
 export const invalidRowsDNAEvent = {
+  headers: {},
   body: JSON.stringify(invalidRowsDNA),
 } as APIGatewayProxyEvent;
 
 export const invalidColsDNAEvent = {
+  headers: {},
   body: JSON.stringify(invalidColsDNA),
 } as APIGatewayProxyEvent;
 

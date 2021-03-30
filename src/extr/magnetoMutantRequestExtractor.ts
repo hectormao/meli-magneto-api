@@ -26,6 +26,9 @@ export class MagnetoMutantRequestExtractor {
     const body: string = event.body ? event.body : "{}";
     const { dna } = JSON.parse(body);
     this.validator.validate(dna);
-    return { dna } as MagnetoMutantRequest;
+    const country: string = event.headers["CloudFront-Viewer-Country"] || "N/A";
+    const originIP: string =
+      event.headers["X-Forwarded-For"]?.split(",")[0].trim() || "N/A";
+    return { dna, country, originIP } as MagnetoMutantRequest;
   }
 }

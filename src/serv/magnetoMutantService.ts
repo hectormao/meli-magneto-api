@@ -5,7 +5,8 @@ import "reflect-metadata";
 import TYPES from "../config/types";
 import { InvalidDNAError, NoMutantError } from "../exc/errors";
 import { DNAChecker } from "../chk/dnaChecker";
-import { MagnetoMutantRequest } from "../ent/types";
+import { MagnetoMutantRequest, MagnetoMutantResult } from "../ent/types";
+import { MagnetoMutantRepo } from "../repo/magnetoMutantRepo";
 
 const log: Logger = loggerFactory.getLogger("ProductService");
 
@@ -21,7 +22,8 @@ type Position = { row: number; col: number };
 class MagnetoMutantService {
   constructor(
     @inject(TYPES.Checker) private readonly dnaCheckers: DNAChecker[],
-    @inject(TYPES.MinFindings) private readonly minFindings: number
+    @inject(TYPES.MinFindings) private readonly minFindings: number,
+    @inject(TYPES.Repository) private readonly repository: MagnetoMutantRepo
   ) {}
 
   public async isMutant(request: MagnetoMutantRequest): Promise<void> {
@@ -29,7 +31,7 @@ class MagnetoMutantService {
 
     log.info({
       msg: "verifying if dna is mutant  ...",
-      data: { dna },
+      data: { request },
     });
 
     let findings: number = 0;
@@ -48,6 +50,7 @@ class MagnetoMutantService {
       const positionFindings: number = await this.checkPostion(pos, dna);
       findings += positionFindings;
       if (findings > this.minFindings) {
+        await this.saveResult(request, true);
         log.info("DNA is a mutant 😀");
         return;
       }
@@ -55,7 +58,21 @@ class MagnetoMutantService {
     }
 
     log.info("DNA isn't a mutant 😭");
+    await this.saveResult(request, false);
     throw new NoMutantError("DNA isn't a mutant 😭");
+  }
+
+  private async saveResult(
+    request: MagnetoMutantRequest,
+    isMutant: boolean
+  ): Promise<void> {
+    const result: MagnetoMutantResult = {
+      ...request,
+      isMutant,
+    };
+    const saveResult: boolean = await this.repository.saveDNACheck(result);
+    log.debug({ msg: "Save Result ... ", data: { saveResult } });
+    return null;
   }
 
   private async checkPostion(pos: Position, dna: string[]): Promise<number> {
